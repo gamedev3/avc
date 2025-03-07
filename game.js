@@ -33,7 +33,7 @@ nightBg.src = 'nightback.jpg';
 let cloudImg = new Image();
 cloudImg.src = 'cloud.png';
 let startSound = new Audio('game-bonus-144751.mp3');
-gameOverSound = new Audio('game-over-arcade-6435.mp3');
+let gameOverSound = new Audio('game-over-arcade-6435.mp3');
 
 let bgMusic = new Audio('groovy-ambient-funk-201745.mp3');
 bgMusic.loop = true;
@@ -106,25 +106,40 @@ function updateControls() {
     if (keys["f"]) shoot();
 }
 
-// **Improved Mobile Touch Controls**
-document.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // Prevent scrolling
+// Mobile Touch Controls
+let touchStartX = 0, touchStartY = 0;
+canvas.addEventListener("touchstart", (e) => {
+    let touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+});
+canvas.addEventListener("touchmove", (e) => {
+    let touch = e.touches[0];
+    let dx = touch.clientX - touchStartX;
+    let dy = touch.clientY - touchStartY;
 
-    let touchX = e.touches[0].clientX;
-    let touchY = e.touches[0].clientY;
+    car.x += dx * 0.1; // Adjust sensitivity if needed
+    car.y += dy * 0.1;
 
-    // Tap anywhere to shoot
-    shooting = true;
-
-    // Optional: You can add bullet direction logic here
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
 });
 
-document.addEventListener("touchend", () => {
-    shooting = false; // Stop shooting on release
+   car.x = Math.max(0, Math.min(car.x, canvas.width - car.width));
+car.y = Math.max(0, Math.min(car.y, canvas.height - car.height));
+;
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
 });
 
-// Shooting
+let canShoot = true;
+
 function shoot() {
+    if (!canShoot) return;
+    canShoot = false;
+    setTimeout(() => { canShoot = true; }, 300); // 300ms cooldown
+
     bullets.push({ x: car.x + 20, y: car.y, width: 5, height: 10, speed: 7 });
     shootSound.play();
 }
@@ -138,6 +153,7 @@ setInterval(spawnMonster, 2000);
 // Update UI
 function updateUI() {
     scoreDisplay.innerText = `Score: ${score}`;
+
     healthBar.style.width = `${car.health}px`;
 }
 
