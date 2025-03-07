@@ -106,25 +106,36 @@ function updateControls() {
     if (keys["f"]) shoot();
 }
 
-// Mobile Touch Controls
-let touchStartX = 0, touchStartY = 0;
-canvas.addEventListener("touchstart", (e) => {
+// **Mobile Touch Controls**
+let touchStartX = null, touchStartY = null;
+let touchThreshold = 20; // Minimum movement to trigger action
+
+document.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling
+
     let touch = e.touches[0];
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
+    shooting = true; // Tap to shoot
 });
-canvas.addEventListener("touchmove", (e) => {
+
+document.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+
     let touch = e.touches[0];
     let dx = touch.clientX - touchStartX;
     let dy = touch.clientY - touchStartY;
 
-    if (dx > 20) car.x += car.speed;
-    if (dx < -20) car.x -= car.speed;
-    if (dy > 20) car.y += car.speed;
-    if (dy < -20) car.y -= car.speed;
+    // Detect movement direction
+    keys["ArrowRight"] = dx > touchThreshold;
+    keys["ArrowLeft"] = dx < -touchThreshold;
+    keys["ArrowDown"] = dy > touchThreshold;
+    keys["ArrowUp"] = dy < -touchThreshold;
+});
 
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
+document.addEventListener("touchend", () => {
+    keys = {}; // Stop movement when touch is released
+    shooting = false; // Stop shooting
 });
 
 // Shooting
