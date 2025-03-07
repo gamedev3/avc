@@ -94,12 +94,6 @@ retryButton.addEventListener("click", () => {
     document.location.reload();
 });
 
-let keys = {}; // For keyboard support
-let bullets = [];
-let canShoot = true;
-let touchStartX = 0, touchStartY = 0;
-let touchMoving = false; // To differentiate movement from shooting
-
 // Keyboard Controls
 window.addEventListener("keydown", (e) => { keys[e.key] = true; });
 window.addEventListener("keyup", (e) => { keys[e.key] = false; });
@@ -112,63 +106,32 @@ function updateControls() {
     if (keys["f"]) shoot();
 }
 
-// 📱 Mobile Controls
+// Mobile Touch Controls
+let touchStartX = 0, touchStartY = 0;
 canvas.addEventListener("touchstart", (e) => {
-    e.preventDefault();
     let touch = e.touches[0];
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
-    touchMoving = false;
 });
-
 canvas.addEventListener("touchmove", (e) => {
-    e.preventDefault();
     let touch = e.touches[0];
     let dx = touch.clientX - touchStartX;
     let dy = touch.clientY - touchStartY;
 
-    // Sensitivity factor (increase for faster response)
-    let sensitivity = 0.5;
+    if (dx > 10) car.x += car.speed;
+    if (dx < -20) car.x -= car.speed;
+    if (dy > 10) car.y += car.speed;
+    if (dy < -20) car.y -= car.speed;
 
-    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-        touchMoving = true; // User is dragging, not shooting
-        car.x += dx * sensitivity;
-        car.y += dy * sensitivity;
-
-        // Keep car inside canvas
-        car.x = Math.max(0, Math.min(car.x, canvas.width - car.width));
-        car.y = Math.max(0, Math.min(car.y, canvas.height - car.height));
-
-        // Update touch start point for continuous movement
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-    }
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
 });
 
-canvas.addEventListener("touchend", (e) => {
-    e.preventDefault();
-    if (!touchMoving) shoot(); // If user just tapped, shoot!
-});
-
-// 🚀 Fast Shooting System
+// Shooting
 function shoot() {
-    if (!canShoot) return;
-    canShoot = false;
-    setTimeout(() => { canShoot = true; }, 200); // 200ms cooldown
-
-    bullets.push({ x: car.x + car.width / 2, y: car.y, width: 5, height: 10, speed: 10 });
+    bullets.push({ x: car.x + 20, y: car.y, width: 5, height: 10, speed: 7 });
     shootSound.play();
 }
-
-// 🔄 Update Game Loop
-function gameLoop() {
-    updateControls();
-    updateBullets(); // Move bullets
-    requestAnimationFrame(gameLoop);
-}
-
-// Start Game
-gameLoop();
 
 // Spawn Monsters
 function spawnMonster() {
