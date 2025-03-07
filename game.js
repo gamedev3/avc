@@ -106,26 +106,27 @@ function updateControls() {
     if (keys["f"]) shoot();
 }
 
-// Mobile Touch Controls
-let touchStartX = 0, touchStartY = 0;
-canvas.addEventListener("touchstart", (e) => {
-    let touch = e.touches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-});
-canvas.addEventListener("touchmove", (e) => {
-    let touch = e.touches[0];
-    let dx = touch.clientX - touchStartX;
-    let dy = touch.clientY - touchStartY;
+ // Touch Controls for Mobile
+        let touchStartX = 0, touchStartY = 0;
+        canvas.addEventListener("touchstart", (e) => {
+            let touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+        canvas.addEventListener("touchmove", (e) => {
+            let touch = e.touches[0];
+            let dx = touch.clientX - touchStartX;
+            let dy = touch.clientY - touchStartY;
 
-    if (dx > 100) car.x += car.speed;
-    if (dx < -100) car.x -= car.speed;
-    if (dy > 100) car.y += car.speed;
-    if (dy < -100) car.y -= car.speed;
+            if (dx > 20) car.x += car.speed;
+            if (dx < -20) car.x -= car.speed;
+            if (dy > 20) car.y += car.speed;
+            if (dy < -20) car.y -= car.speed;
 
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-});
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+
 
 // Shooting
 function shoot() {
