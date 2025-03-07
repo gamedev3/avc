@@ -118,10 +118,10 @@ canvas.addEventListener("touchmove", (e) => {
     let dx = touch.clientX - touchStartX;
     let dy = touch.clientY - touchStartY;
 
-    if (dx > 10) car.x += car.speed;
-    if (dx < -20) car.x -= car.speed;
-    if (dy > 10) car.y += car.speed;
-    if (dy < -20) car.y -= car.speed;
+    if (dx > 100) car.x += car.speed;
+    if (dx < -100) car.x -= car.speed;
+    if (dy > 100) car.y += car.speed;
+    if (dy < -100) car.y -= car.speed;
 
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
